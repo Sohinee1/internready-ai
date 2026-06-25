@@ -1,4 +1,5 @@
 import streamlit as st
+from google import genai
 
 st.set_page_config(
     page_title="Roadmap Generator",
@@ -36,6 +37,53 @@ domain_data = {
         "resources": ["Flutter documentation", "Firebase documentation", "Dart language tour"]
     }
 }
+def generate_ai_roadmap(name, year, level, domain, daily_time, goal, duration):
+    client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+
+    prompt = f"""
+Create a personalized internship preparation roadmap for this student.
+
+Student details:
+- Name: {name if name else "Student"}
+- Year: {year}
+- Skill level: {level}
+- Domain: {domain}
+- Daily time available: {daily_time}
+- Main goal: {goal}
+- Roadmap duration: {duration}
+
+Return:
+1. Student Profile Summary
+2. Week-wise Roadmap
+3. Skills To Learn
+4. Project Ideas
+5. Learning Resources
+6. GitHub Tasks
+7. LinkedIn Post Idea
+8. Final Advice
+
+Keep it beginner-friendly, practical, and suitable for an Indian B.Tech CSE AIML student.
+"""
+
+    models_to_try = [
+        "gemini-1.5-flash",
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
+    ]
+
+    last_error = None
+
+    for model_name in models_to_try:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt
+            )
+            return response.text
+        except Exception as error:
+            last_error = error
+
+    return f"Gemini is unavailable right now. Please try again later.\n\nTechnical details: {last_error}"
 
 if "roadmap_generated" not in st.session_state:
     st.session_state.roadmap_generated = False
@@ -205,6 +253,14 @@ Week 3: Polish And Present
         file_name="internready_roadmap.txt",
         mime="text/plain"
     )
+    if st.button("Generate AI Roadmap"):
+        with st.spinner("Generating AI roadmap..."):
+            ai_roadmap = generate_ai_roadmap(
+                name, year, level, domain, daily_time, goal, duration
+            )
+
+            st.subheader("AI-Generated Roadmap")
+            st.markdown(ai_roadmap)
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs(
         ["Roadmap", "Project Ideas", "Resources", "GitHub Tasks", "LinkedIn Plan"]

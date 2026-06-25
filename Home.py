@@ -23,28 +23,33 @@ with col2:
     st.metric("Focus", "Internships")
 
 with col3:
-    st.metric("Built With", "Streamlit")
+    st.metric("Built With", "Streamlit, Gemini")
 
 st.header("How To Use")
 
 st.markdown("""
 1. Open **Roadmap Generator** from the sidebar.
 2. Enter your year, skill level, domain, daily time, goal, and duration.
-3. Generate your roadmap and download it.
-4. Open **Student Toolkit** to track progress and create resume or LinkedIn content.
+3. Generate your roadmap, or click **Generate AI Roadmap** for an AI-personalized version.
+4. Open **Student Toolkit** to track progress and create AI-generated resume or LinkedIn content.
+5. Open **AI Mentor Chat** anytime to ask questions about your internship prep or career doubts.
 """)
 
 st.header("Features")
 
 st.markdown("""
 - Domain-specific learning roadmap
+- AI-generated personalized roadmap (powered by Gemini)
 - Skills and project suggestions
 - Learning resources
 - Internship readiness score
 - Personalized advice
 - Downloadable roadmap
 - Progress checklist
-- Resume and LinkedIn helper
+- AI Mentor Chat with conversation memory
+- AI-powered resume bullet point generator
+- AI-powered LinkedIn caption generator
+- GitHub presentation tips
 """)
 
 st.header("Why This Project Is Useful")

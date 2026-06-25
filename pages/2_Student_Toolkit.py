@@ -1,4 +1,7 @@
 import streamlit as st
+from google import genai
+
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
 st.set_page_config(
     page_title="Student Toolkit",
@@ -52,10 +55,26 @@ with tab2:
     main_feature = st.text_input("Main feature", value="personalized roadmap generation")
 
     if st.button("Generate Resume Bullet"):
-        resume_bullet = (
-            f"Built {project_name}, a {domain} project using {tech_stack}, "
-            f"featuring {main_feature} for student internship preparation."
-        )
+        with st.spinner("Generating resume bullet..."):
+            prompt = f"""
+Write 2 to 3 professional resume bullet points for a B.Tech CSE AIML student's project.
+
+Project name: {project_name}
+Domain: {domain}
+Tech stack: {tech_stack}
+Main feature: {main_feature}
+
+Use strong action verbs, keep each bullet under 25 words, and make it suitable for an internship resume.
+"""
+            try:
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt
+                )
+                resume_bullet = response.text
+            except Exception as error:
+                resume_bullet = f"Something went wrong: {error}"
+
         st.success(resume_bullet)
 
 with tab3:
@@ -66,13 +85,25 @@ with tab3:
     post_stack = st.text_input("Tech stack used", value="Python and Streamlit")
 
     if st.button("Generate LinkedIn Caption"):
-        caption = f"""
-I built {post_project_name}, a student-focused project that helps with internship preparation.
+        with st.spinner("Generating LinkedIn caption..."):
+            prompt = f"""
+Write a LinkedIn post for a B.Tech CSE AIML student announcing a project they built.
 
-The project includes {post_feature} and was built using {post_stack}.
+Project name: {post_project_name}
+Key feature: {post_feature}
+Tech stack: {post_stack}
 
-This project helped me learn app development, user input handling, project structuring, and practical problem-solving.
+Make it sound genuine, beginner-friendly, slightly excited, include relevant hashtags at the end, and keep it under 150 words.
 """
+            try:
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt
+                )
+                caption = response.text
+            except Exception as error:
+                caption = f"Something went wrong: {error}"
+
         st.info(caption)
 
 with tab4:
